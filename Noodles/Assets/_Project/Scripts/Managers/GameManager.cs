@@ -1,6 +1,6 @@
 using System;
 using _Project.Scripts.Enums;
-using UI;
+using _Project.Scripts.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
