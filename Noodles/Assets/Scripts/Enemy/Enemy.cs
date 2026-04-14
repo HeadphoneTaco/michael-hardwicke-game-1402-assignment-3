@@ -2,6 +2,7 @@ using System.Collections;
 using Enums;
 using UnityEngine;
 using UnityEngine.AI;
+using Interfaces;
 
 namespace Enemy
 {
@@ -19,87 +20,126 @@ namespace Enemy
         [SerializeField] private float giveUpDistance;
         [SerializeField] private float chaseCheckAngle;
         [SerializeField] private Animator enemyAnim;
-        private EnemyState currentState;
-        private Transform currentTarget;
-        private bool isWaiting;
+        [SerializeField] private float attackRange = 2f;
+        [SerializeField] private int attackDamage = 10;
+        [SerializeField] private float attackCooldown = 1.5f;
+        private float _lastAttackTime;
+        private static readonly int Attack = Animator.StringToHash("attack");
+        
+        private EnemyState _currentState;
+        private Transform _currentTarget;
+        private bool _isWaiting;
         private static readonly int Walk = Animator.StringToHash("walk");
         private static readonly int Idle = Animator.StringToHash("idle");
-        private Vector3 directionToPlayer;
+        private Vector3 _directionToPlayer;
         private void Start()
         {
             ChooseARandomPointAndMove();
         }
         private void FixedUpdate()
         {
-            if (currentState == EnemyState.Idle)
+            if (_currentState == EnemyState.Idle)
             {
-                enemyAnim.SetBool(Idle, true);
-                Debug.Log("Current State: " + currentState);
-                if (!isWaiting)
-                {
+                if (!_isWaiting)
                     StartCoroutine(WaitAndChooseARandomPointAndMove(5));
-
-                    //check for the player to chase
-                    if (IsPlayerInRange() && IsInFOV())
-                    {
-                        currentState = EnemyState.Chase;
-                        enemyAnim.SetBool(Idle, false);
-                        Debug.Log("Current State: " + currentState);
-                    }
-                }
-            }
-            else if (currentState == EnemyState.Patrol)
-            {
-                enemyAnim.SetBool(Walk, true);
-                Debug.Log("Current State: " + currentState);
-
-                if (agent.remainingDistance <= 0.2f)
-                {
-                    currentState = EnemyState.Idle;
-                    enemyAnim.SetBool(Walk, false);
-                    Debug.Log("Current State: " + currentState);
-                }
-
-                //check for the player to chase
+        
                 if (IsPlayerInRange() && IsInFOV())
+                    SetState(EnemyState.Chase);
+            }
+            else if (_currentState == EnemyState.Patrol)
+            {
+                if (agent.remainingDistance <= 0.2f)
+                    SetState(EnemyState.Idle);
+        
+                if (IsPlayerInRange() && IsInFOV())
+                    SetState(EnemyState.Chase);
+            }
+            else if (_currentState == EnemyState.Chase)
+            {
+                agent.SetDestination(playerTransform.position);
+    
+                if (IsPlayerInAttackRange())
+                    SetState(EnemyState.Attack);
+    
+                if (HasPlayerGoneAwayFromMeTooSad())
+                    SetState(EnemyState.Idle);
+            }
+            else if (_currentState == EnemyState.Attack)
+            {
+                agent.SetDestination(transform.position); // stop moving
+    
+                if (!IsPlayerInAttackRange())
+                    SetState(EnemyState.Chase);
+    
+                if (Time.time >= _lastAttackTime + attackCooldown)
                 {
-                    currentState = EnemyState.Chase;
-                    enemyAnim.SetBool(Walk, true);
-                    Debug.Log("Current State: " + currentState);
-                }
-
-
-                else if (currentState == EnemyState.Chase)
-                {
-                    agent.SetDestination(playerTransform.position);
-                    enemyAnim.SetBool(Walk, false);
-
-                    //give up
-                    if (HasPlayerGoneAwayFromMeTooSad())
-                    {
-                        currentState = EnemyState.Idle;
-                        enemyAnim.SetBool(Walk, false);
-                        Debug.Log("Current State: " + currentState);
-                    }
+                    _lastAttackTime = Time.time;
+                    TryDamagePlayer();
                 }
             }
         }
+        
+        private void SetState(EnemyState newState)
+        {
+            // Don't do anything if we're already in this state
+            if (_currentState == newState) return;
+    
+            _currentState = newState;
+            Debug.Log("Current State: " + _currentState);
+    
+            switch (_currentState)
+            {
+                case EnemyState.Idle:
+                    enemyAnim.SetBool(Walk, false);
+                    enemyAnim.SetBool(Idle, true);
+                    enemyAnim.SetBool(Attack, false);
+                    break;
+            
+                case EnemyState.Patrol:
+                    enemyAnim.SetBool(Idle, false);
+                    enemyAnim.SetBool(Walk, true);
+                    enemyAnim.SetBool(Attack, false);
+                    break;
+            
+                case EnemyState.Chase:
+                    enemyAnim.SetBool(Idle, false);
+                    enemyAnim.SetBool(Walk, true);
+                    enemyAnim.SetBool(Attack, false);
+                    break;
+                
+                case EnemyState.Attack:
+                    enemyAnim.SetBool(Walk, false);
+                    enemyAnim.SetBool(Idle, false);
+                    enemyAnim.SetBool(Attack, true);
+                    break;
+            }
+        }
+        
+        private bool IsPlayerInAttackRange()
+        {
+            return Vector3.Distance(transform.position, playerTransform.position) <= attackRange;
+        }
+
+        private void TryDamagePlayer()
+        {
+            if (playerTransform.TryGetComponent<IDamageable>(out var damageable))
+                damageable.TakeDamage(attackDamage);
+        }
+        
         private IEnumerator WaitAndChooseARandomPointAndMove(float timeToWait)
         {
-            isWaiting = true;
+            _isWaiting = true;
             yield return new WaitForSeconds(timeToWait);
-            currentState = EnemyState.Patrol;
-            enemyAnim.SetBool(Idle, false);
-            Debug.Log("Current State: " + currentState);
+            SetState(EnemyState.Patrol);
             ChooseARandomPointAndMove();
-            isWaiting = false;
+            _isWaiting = false;
         }
         private void ChooseARandomPointAndMove()
         {
             if (patrolPoints.Length <= 0) return;
 
-            currentTarget = patrolPoints[Random.Range(0, patrolPoints.Length)];
-            agent.SetDestination(currentTarget.position);
+            _currentTarget = patrolPoints[Random.Range(0, patrolPoints.Length)];
+            agent.SetDestination(_currentTarget.position);
             Debug.Log("Random point chosen");
         }
         private bool IsPlayerInRange()
@@ -112,9 +152,8 @@ namespace Enemy
         }
         private bool IsInFOV()
         {
-            directionToPlayer = (playerTransform.position - transform.position).normalized;
-            return Vector3.Angle(transform.forward, directionToPlayer) <= chaseCheckAngle;
+            _directionToPlayer = (playerTransform.position - transform.position).normalized;
+            return Vector3.Angle(transform.forward, _directionToPlayer) <= chaseCheckAngle;
         }
-
     }
 }

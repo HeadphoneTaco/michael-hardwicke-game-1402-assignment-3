@@ -7,18 +7,21 @@ namespace Player
     /// </summary>
     public class PlayerAnimator : MonoBehaviour
     {
+        private static readonly int IsGrounded = Animator.StringToHash("IsGrounded");
+        private static readonly int Velocity = Animator.StringToHash("Velocity");
+        private static readonly int Jump = Animator.StringToHash("Jump");
         [SerializeField] private PlayerController playerController;
         [SerializeField] private Animator anim;
         private Vector3 _playerVelocity;
 
         private void Update()
         {
-            anim.SetBool("IsGrounded", playerController.IsGrounded());
+            anim.SetBool(IsGrounded, playerController.IsGrounded());
 
             _playerVelocity = playerController.GetPlayerVelocity();
             _playerVelocity.y = 0;
 
-            anim.SetFloat("Velocity", _playerVelocity.sqrMagnitude);
+            anim.SetFloat(Velocity, _playerVelocity.sqrMagnitude);
         }
 
         private void OnEnable()
@@ -33,7 +36,7 @@ namespace Player
 
         private void OnJump()
         {
-            anim.SetTrigger("Jump");
+            anim.SetTrigger(Jump);
         }
     }
 }

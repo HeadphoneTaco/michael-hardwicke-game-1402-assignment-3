@@ -20,7 +20,7 @@ namespace Managers
         [SerializeField] private SpawnPoint activeSpawnPoint;
         [SerializeField] private GameObject ghostPrefab;
         [Space(10)] [SerializeField] private float deathDelay = 2f;
-        private GameObject activeGhost;
+        private GameObject _activeGhost;
 
         private void Awake()
         {
@@ -54,9 +54,9 @@ namespace Managers
             playerController.enabled = false;
             if (playerAnimator != null) playerAnimator.SetTrigger(Death);
             if (ghostPrefab != null)
-                activeGhost = Instantiate(ghostPrefab, playerController.transform.position, Quaternion.identity);
+                _activeGhost = Instantiate(ghostPrefab, playerController.transform.position, Quaternion.identity);
             yield return new WaitForSeconds(deathDelay);
-            if (activeGhost != null) Destroy(activeGhost);
+            if (_activeGhost != null) Destroy(_activeGhost);
             playerController.transform.position = activeSpawnPoint.transform.position;
             playerHealth.ResetHealth();
             playerAnimator.SetTrigger(Respawn);

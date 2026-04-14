@@ -12,20 +12,20 @@ namespace Systems
     public class Health : MonoBehaviour, IDamageable
     {
         [SerializeField] private int maxHealth = 5;
-        private int currentHealth;
+        private int _currentHealth;
 
         private void Awake()
         {
-            currentHealth = maxHealth;
+            _currentHealth = maxHealth;
         }
 
         public void TakeDamage(int amount)
         {
-            currentHealth -= amount;
-            currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-            OnHealthChanged?.Invoke(currentHealth, maxHealth);
+            _currentHealth -= amount;
+            _currentHealth = Mathf.Clamp(_currentHealth, 0, maxHealth);
+            OnHealthChanged?.Invoke(_currentHealth, maxHealth);
             AudioManager.Instance?.PlayHit();
-            if (currentHealth <= 0) OnDeath?.Invoke();
+            if (_currentHealth <= 0) OnDeath?.Invoke();
         }
 
         public event Action<int, int> OnHealthChanged;
@@ -33,21 +33,21 @@ namespace Systems
 
         public void Heal(int amount)
         {
-            currentHealth += amount;
-            currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+            _currentHealth += amount;
+            _currentHealth = Mathf.Clamp(_currentHealth, 0, maxHealth);
 
-            OnHealthChanged?.Invoke(currentHealth, maxHealth);
+            OnHealthChanged?.Invoke(_currentHealth, maxHealth);
         }
 
         public void ResetHealth()
         {
-            currentHealth = maxHealth;
-            OnHealthChanged?.Invoke(currentHealth, maxHealth);
+            _currentHealth = maxHealth;
+            OnHealthChanged?.Invoke(_currentHealth, maxHealth);
         }
 
         public int GetCurrentHealth()
         {
-            return currentHealth;
+            return _currentHealth;
         }
 
         public int GetMaxHealth()

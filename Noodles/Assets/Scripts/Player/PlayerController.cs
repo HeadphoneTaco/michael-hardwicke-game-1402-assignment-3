@@ -96,8 +96,6 @@ namespace Player
                 CalculateMovementAim();
                 UpdateAimTrack();
             }
-
-
             _characterController.Move(_velocity * Time.deltaTime);
         }
 

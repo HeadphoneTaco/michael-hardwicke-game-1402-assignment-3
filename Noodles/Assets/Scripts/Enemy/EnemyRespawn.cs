@@ -11,13 +11,18 @@ namespace Enemy
     /// </summary>
     public class EnemyRespawn : MonoBehaviour
     {
-        [FormerlySerializedAs("respawnPoint")] [SerializeField]
-        private Transform enemyrespawnPoint;
+        private Transform _enemyRespawnPoint;
         
         //TODO:Make enemies have health so they can be killed and actually test respawning lol
         [SerializeField] private Health health;
+        private NavMeshAgent _navAgent;
 
- 
+
+        private void Awake()
+        {
+            _navAgent = GetComponent<NavMeshAgent>();
+        }
+
         private void OnEnable()
         {
             health.OnDeath += HandleDeath;
@@ -30,11 +35,10 @@ namespace Enemy
         
         private void HandleDeath()
         {
-            transform.position = enemyrespawnPoint.position;
+            transform.position = _enemyRespawnPoint.position;
             health.ResetHealth();
 
-            var navAgent = GetComponent<NavMeshAgent>();
-            if (navAgent != null) navAgent.ResetPath();
+            _navAgent?.ResetPath();
         }
     }
 }

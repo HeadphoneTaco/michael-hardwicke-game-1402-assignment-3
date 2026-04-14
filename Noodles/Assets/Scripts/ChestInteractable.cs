@@ -11,8 +11,8 @@ public class ChestInteractable : MonoBehaviour, IInteractable
 {
     private static readonly int IsOpen = Animator.StringToHash("IsOpen");
     [SerializeField] private Animator anim;
-    private Tween collectTween;
-    private Tween loopTween;
+    private Tween _collectTween;
+    private Tween _loopTween;
     
     private void Start()
     {
@@ -47,7 +47,7 @@ public class ChestInteractable : MonoBehaviour, IInteractable
     public void OnInteract()
     {
         if (anim != null)
-            collectTween = transform.DOScale(0, .5f).SetEase(Ease.InBack)
+            _collectTween = transform.DOScale(0, .5f).SetEase(Ease.InBack)
                 .OnComplete(() => { Destroy(gameObject); });
     }
 }

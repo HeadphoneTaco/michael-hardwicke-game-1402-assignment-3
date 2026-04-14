@@ -9,12 +9,12 @@ namespace UI
     public class CoinUI : MonoBehaviour
     {
         [SerializeField] private TMP_Text coinText;
-        private int coinCount;
+        private int _coinCount;
 
         public void AddCoin()
         {
-            coinCount++;
-            coinText.SetText($"Coins: {coinCount}");
+            _coinCount++;
+            coinText.SetText($"Coins: {_coinCount}");
         }
     }
 }
