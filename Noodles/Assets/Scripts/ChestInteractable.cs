@@ -18,7 +18,7 @@ public class ChestInteractable : MonoBehaviour, IInteractable
     {
         if (!anim) return;
 
-        transform.DOScale(1.2f, .5f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutQuad);
+        _loopTween = transform.DOScale(1.2f, .5f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutQuad);
     }
     
     private void OnDestroy()

@@ -52,14 +52,14 @@ namespace Managers
         private IEnumerator DeathSequence()
         {
             playerController.enabled = false;
-            if (playerAnimator != null) playerAnimator.SetTrigger(Death);
-            if (ghostPrefab != null)
+            if (playerAnimator is not null) playerAnimator.SetTrigger(Death);
+            if (ghostPrefab is not null)
                 _activeGhost = Instantiate(ghostPrefab, playerController.transform.position, Quaternion.identity);
             yield return new WaitForSeconds(deathDelay);
-            if (_activeGhost != null) Destroy(_activeGhost);
+            if (_activeGhost is not null) Destroy(_activeGhost);
             playerController.transform.position = activeSpawnPoint.transform.position;
             playerHealth.ResetHealth();
-            playerAnimator.SetTrigger(Respawn);
+            playerAnimator?.SetTrigger(Respawn);
             playerController.enabled = true;
         }
 
