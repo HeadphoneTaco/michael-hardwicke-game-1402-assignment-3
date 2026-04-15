@@ -1,7 +1,8 @@
+using System.Collections;
 using Systems;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Serialization;
+
 
 namespace Enemy
 {
@@ -11,16 +12,21 @@ namespace Enemy
     /// </summary>
     public class EnemyRespawn : MonoBehaviour
     {
-        private Transform _enemyRespawnPoint;
-        
-        //TODO:Make enemies have health so they can be killed and actually test respawning lol
+        [SerializeField] private Transform enemyRespawnPoint;
         [SerializeField] private Health health;
+        [SerializeField] private float respawnDelay = 3f;
+        
         private NavMeshAgent _navAgent;
+        private Enemy _enemy;
+        private Animator _animator;
+        private static readonly int Death = Animator.StringToHash("death");
 
 
         private void Awake()
         {
             _navAgent = GetComponent<NavMeshAgent>();
+            _enemy = GetComponent<Enemy>();
+            _animator = GetComponent<Animator>();
         }
 
         private void OnEnable()
@@ -35,10 +41,34 @@ namespace Enemy
         
         private void HandleDeath()
         {
-            transform.position = _enemyRespawnPoint.position;
-            health.ResetHealth();
+            StartCoroutine(DeathSequence());
+        }
+        
+        private IEnumerator DeathSequence()
+        {
+            // Disable AI so enemy stops moving
+            _navAgent.enabled = false;
+            _enemy.enabled = false;
+            
+            
+            _animator?.SetTrigger(Death);
+            
+            yield return new WaitForSeconds(respawnDelay);
+            
+            // Reset position
+            transform.position = enemyRespawnPoint.position;
 
-            _navAgent?.ResetPath();
+            // Reset health and re-enable AI
+            health.ResetHealth();
+            _navAgent.enabled = true;
+            _enemy.enabled = true;
+            _navAgent.ResetPath();
+
+            // Reset enemy back to idle
+            _enemy.ResetEnemy();
+
+            // Reset animator
+            _animator?.ResetTrigger(Death);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Enemy
         [SerializeField] private float attackCooldown = 1.5f;
         private float _lastAttackTime;
         private static readonly int Attack = Animator.StringToHash("attack");
-        
+        private static readonly int Death = Animator.StringToHash("death");
         private EnemyState _currentState;
         private Transform _currentTarget;
         private bool _isWaiting;
@@ -77,6 +77,11 @@ namespace Enemy
                     TryDamagePlayer();
                 }
             }
+        }
+        
+        public void ResetEnemy()
+        {
+            SetState(EnemyState.Idle);
         }
         
         private void SetState(EnemyState newState)
