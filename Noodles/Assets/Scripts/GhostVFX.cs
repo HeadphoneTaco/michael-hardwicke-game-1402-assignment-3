@@ -4,7 +4,6 @@ using UnityEngine;
 ///     Controls a transient ghost visual effect that floats upwards,
 ///     and destroys itself after its lifetime expires.
 /// </summary>
-/// TODO:Add billboard and fade effect
 public class GhostVFX : MonoBehaviour
 {
     [SerializeField] private float floatSpeed = 2f;

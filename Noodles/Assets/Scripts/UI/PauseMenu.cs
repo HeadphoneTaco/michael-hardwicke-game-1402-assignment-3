@@ -23,14 +23,12 @@ namespace UI
             Hide();
         }
 
-        //TODO: Streamline to only have OnGamePaused
         private void OnEnable()
         {
             GameManager.Instance.OnGamePaused += Show;
             GameManager.Instance.OnGameResumed += Hide;
         }
 
-        //TODO: Streamline to only have OnGamePaused
         private void OnDisable()
         {
             GameManager.Instance.OnGamePaused -= Show;
