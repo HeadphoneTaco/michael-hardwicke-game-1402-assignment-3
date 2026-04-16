@@ -427,11 +427,11 @@ GameObject:
   m_Component:
   - component: {fileID: 4047972025199878}
   - component: {fileID: 95457531584545886}
-  - component: {fileID: 9151070109209824536}
-  - component: {fileID: 6825042738706431481}
-  - component: {fileID: 6434213248765999536}
-  - component: {fileID: 3874870445024644529}
-  - component: {fileID: 3130459372640421407}
+  - component: {fileID: 6694874333996437119}
+  - component: {fileID: 7708470191781709658}
+  - component: {fileID: 5611546867110562001}
+  - component: {fileID: 5993821972086416571}
+  - component: {fileID: 8739599168433800859}
   m_Layer: 0
   m_Name: SlimePBR
   m_TagString: Untagged
@@ -479,7 +479,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!195 &9151070109209824536
+--- !u!195 &6694874333996437119
 NavMeshAgent:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -501,7 +501,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &6825042738706431481
+--- !u!114 &7708470191781709658
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -514,7 +514,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 5
---- !u!114 &6434213248765999536
+--- !u!114 &5611546867110562001
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -531,16 +531,16 @@ MonoBehaviour:
   - {fileID: 4489012720934701680}
   - {fileID: 4398122670485331679}
   - {fileID: 6100341734784024592}
-  agent: {fileID: 9151070109209824536}
-  playerTransform: {fileID: 7566300807073070694, guid: 9ef8d1de1859d1040ace87ae499c3dd9, type: 3}
+  agent: {fileID: 6694874333996437119}
+  playerTransform: {fileID: 0}
   chaseDistance: 10
   giveUpDistance: 20
   chaseCheckAngle: 30
   enemyAnim: {fileID: 95457531584545886}
   attackRange: 2
-  attackDamage: 1
+  attackDamage: 10
   attackCooldown: 1.5
---- !u!114 &3874870445024644529
+--- !u!114 &5993821972086416571
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -552,10 +552,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b288e6093994f694ba5a5b2bde5663b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyRespawnPoint: {fileID: 4157815152243708519, guid: b0f2f78d231a3544fbfffa5c867bfbd0, type: 3}
-  health: {fileID: 6825042738706431481}
+  enemyRespawnPoint: {fileID: 0}
+  health: {fileID: 7708470191781709658}
   respawnDelay: 3
---- !u!136 &3130459372640421407
+--- !u!136 &8739599168433800859
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -575,9 +575,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 1.133907
+  m_Height: 1.1614347
   m_Direction: 1
-  m_Center: {x: 0, y: 0.5267338, z: 0}
+  m_Center: {x: 0, y: 0.56408215, z: 0}
 --- !u!1 &479115577246928839
 GameObject:
   m_ObjectHideFlags: 0
