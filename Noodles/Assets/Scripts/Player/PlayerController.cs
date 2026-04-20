@@ -96,6 +96,7 @@ namespace Player
                 CalculateMovementAim();
                 UpdateAimTrack();
             }
+
             _characterController.Move(_velocity * Time.deltaTime);
         }
 
@@ -180,7 +181,7 @@ namespace Player
             _velocity = _currentHorizontalVelocity + Vector3.up * _velocity.y;
             _velocity.y += gravity * Time.deltaTime;
         }
-        
+
         private void CalculateMovementAim()
         {
             transform.Rotate(Vector3.up, rotationSpeed * _lookInput.x * Time.deltaTime);

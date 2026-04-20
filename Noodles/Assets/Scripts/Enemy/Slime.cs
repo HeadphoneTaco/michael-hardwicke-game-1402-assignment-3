@@ -1,15 +1,19 @@
 using System;
 using System.Collections;
 using Enums;
+using Interfaces;
 using UnityEngine;
 using UnityEngine.AI;
-using Interfaces;
 using Random = UnityEngine.Random;
 
 namespace Enemy
 {
     public class Slime : Base
     {
+        private static readonly int AttackHash = Animator.StringToHash("attack");
+        private static readonly int DeathHash = Animator.StringToHash("death");
+        private static readonly int WalkHash = Animator.StringToHash("walk");
+        private static readonly int IdleHash = Animator.StringToHash("idle");
         [SerializeField] private Transform[] patrolPoints;
         [SerializeField] private NavMeshAgent agent;
         [SerializeField] private Transform playerTransform;
@@ -21,19 +25,15 @@ namespace Enemy
         [SerializeField] private int attackDamage = 10;
         [SerializeField] private float attackCooldown = 5f;
 
+        private Transform _currentTarget;
+        private Vector3 _directionToPlayer;
+        private bool _isWaiting;
+
+        private float _lastAttackTime;
+
         protected override float ChaseDistance => chaseDistance;
         protected override float AttackRange => attackRange;
         protected override int AttackDamage => attackDamage;
-
-        private float _lastAttackTime;
-        private static readonly int AttackHash = Animator.StringToHash("attack");
-        private static readonly int DeathHash = Animator.StringToHash("death");
-        private static readonly int WalkHash = Animator.StringToHash("walk");
-        private static readonly int IdleHash = Animator.StringToHash("idle");
-
-        private Transform _currentTarget;
-        private bool _isWaiting;
-        private Vector3 _directionToPlayer;
 
         private void Start()
         {

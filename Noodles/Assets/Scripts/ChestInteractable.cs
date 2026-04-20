@@ -13,19 +13,19 @@ public class ChestInteractable : MonoBehaviour, IInteractable
     [SerializeField] private Animator anim;
     private Tween _collectTween;
     private Tween _loopTween;
-    
+
     private void Start()
     {
         if (!anim) return;
 
         _loopTween = transform.DOScale(1.2f, .5f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutQuad);
     }
-    
+
     private void OnDestroy()
     {
         transform.DOKill();
     }
-    
+
     public void OnHoverIn()
     {
         if (anim != null)
@@ -43,7 +43,7 @@ public class ChestInteractable : MonoBehaviour, IInteractable
             Toast.Instance.HideToast();
         }
     }
-    
+
     public void OnInteract()
     {
         if (anim != null)

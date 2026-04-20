@@ -11,7 +11,7 @@ namespace Pickups
     /// </summary>
     public class CoinPickup : MonoBehaviour, ICollectable
     {
-     public void OnCollect(GameObject collector)
+        public void OnCollect(GameObject collector)
         {
             FindAnyObjectByType<CoinUI>()?.AddCoin();
             AudioManager.Instance?.PlayCollect();

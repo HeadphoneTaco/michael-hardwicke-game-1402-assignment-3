@@ -1,4 +1,5 @@
 using System.Collections;
+using Enemy;
 using Systems;
 using UnityEngine;
 using UnityEngine.AI;
@@ -11,21 +12,21 @@ namespace Managers
     /// </summary>
     public class EnemyRespawnManager : MonoBehaviour
     {
+        private static readonly int Death = Animator.StringToHash("death");
         [SerializeField] private Transform enemyRespawnPoint;
         [SerializeField] private Health health;
         [SerializeField] private float respawnDelay = 3f;
-        
-        private NavMeshAgent _navAgent;
-        private Enemy.Slime _slime;
         private Animator _animator;
-        private static readonly int Death = Animator.StringToHash("death");
         private bool _isDead;
+
+        private NavMeshAgent _navAgent;
+        private Slime _slime;
 
 
         private void Awake()
         {
             _navAgent = GetComponent<NavMeshAgent>();
-            _slime = GetComponent<Enemy.Slime>();
+            _slime = GetComponent<Slime>();
             _animator = GetComponent<Animator>();
         }
 
@@ -33,20 +34,20 @@ namespace Managers
         {
             health.OnDeath += HandleDeath;
         }
-        
+
         private void OnDisable()
         {
             health.OnDeath -= HandleDeath;
         }
-        
+
 
         private void HandleDeath()
         {
-            if (_isDead) return;       // ignore repeat calls
+            if (_isDead) return; // ignore repeat calls
             _isDead = true;
             StartCoroutine(DeathSequence());
         }
-        
+
         private IEnumerator DeathSequence()
         {
             // Disable AI so enemy stops moving
@@ -57,13 +58,13 @@ namespace Managers
             yield return new WaitForSeconds(respawnDelay);
             health.ResetHealth();
             _navAgent.enabled = true;
-            _navAgent.Warp(enemyRespawnPoint.position); 
+            _navAgent.Warp(enemyRespawnPoint.position);
             _navAgent.ResetPath();
             _isDead = false;
             _slime.enabled = true;
             _slime.ResetEnemy();
             _animator?.ResetTrigger(Death);
-            yield return null;   
+            yield return null;
             _animator?.Play("idle", 0, 0f);
         }
     }

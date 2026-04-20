@@ -11,12 +11,14 @@ public class GhostVFX : MonoBehaviour
     private Camera _mainCamera;
     private SpriteRenderer _spriteRenderer;
     private float _timer;
+
     private void Start()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _mainCamera = Camera.main;
         _timer = 0f;
     }
+
     private void Update()
     {
         _timer += Time.deltaTime;

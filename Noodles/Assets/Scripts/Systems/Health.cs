@@ -13,8 +13,6 @@ namespace Systems
     {
         [SerializeField] private int maxHealth = 5;
         private int _currentHealth;
-        public event Action<int, int> OnHealthChanged;
-        public event Action OnDeath;
 
         private void Awake()
         {
@@ -29,7 +27,10 @@ namespace Systems
             AudioManager.Instance?.PlayHit();
             if (_currentHealth <= 0) OnDeath?.Invoke();
         }
-        
+
+        public event Action<int, int> OnHealthChanged;
+        public event Action OnDeath;
+
         public void Heal(int amount)
         {
             _currentHealth += amount;

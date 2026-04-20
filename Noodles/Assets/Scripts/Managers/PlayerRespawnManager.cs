@@ -11,6 +11,9 @@ namespace Managers
     /// </summary>
     public class PlayerRespawnManager : MonoBehaviour
     {
+        private static PlayerRespawnManager _instance;
+        private static readonly int Respawn = Animator.StringToHash("Respawn");
+        private static readonly int Death = Animator.StringToHash("Death");
         [SerializeField] private PlayerController controller;
         [SerializeField] private Animator animator;
         [SerializeField] private SpawnPoint activeSpawnPoint;
@@ -18,9 +21,6 @@ namespace Managers
         [SerializeField] private Health health;
         [SerializeField] private float deathDelay = 2f;
         private GameObject _activeGhost;
-        private static PlayerRespawnManager _instance;
-        private static readonly int Respawn = Animator.StringToHash("Respawn");
-        private static readonly int Death = Animator.StringToHash("Death");
 
         private void Awake()
         {
@@ -32,17 +32,17 @@ namespace Managers
 
             _instance = this;
         }
-        
-        private void OnDisable()
-        {
-            health.OnDeath -= HandleDeath;
-        }
 
         private void OnEnable()
         {
             health.OnDeath += HandleDeath;
         }
-        
+
+        private void OnDisable()
+        {
+            health.OnDeath -= HandleDeath;
+        }
+
         private void HandleDeath()
         {
             AudioManager.Instance?.PlayDeath();

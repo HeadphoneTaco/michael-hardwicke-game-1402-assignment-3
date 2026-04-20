@@ -20,7 +20,7 @@ namespace Player
             interactionInput.Enable();
             interactionInput.performed += Interact;
         }
-        
+
         private void OnDisable()
         {
             interactionInput.performed -= Interact;
