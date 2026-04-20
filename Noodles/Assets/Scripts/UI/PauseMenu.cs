@@ -19,7 +19,6 @@ namespace UI
             resumeButton.onClick.AddListener(OnResumeClicked);
             restartButton.onClick.AddListener(OnRestartClicked);
             mainMenuButton.onClick.AddListener(OnMainMenuClicked);
-            GameManager.Instance.OnGamePaused += Show;
             Hide();
         }
 

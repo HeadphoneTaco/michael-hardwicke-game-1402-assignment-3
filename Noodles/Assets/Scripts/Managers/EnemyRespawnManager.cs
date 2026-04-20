@@ -16,15 +16,16 @@ namespace Managers
         [SerializeField] private float respawnDelay = 3f;
         
         private NavMeshAgent _navAgent;
-        private Enemy.Enemy _enemy;
+        private Enemy.Slime _slime;
         private Animator _animator;
         private static readonly int Death = Animator.StringToHash("death");
+        private bool _isDead;
 
 
         private void Awake()
         {
             _navAgent = GetComponent<NavMeshAgent>();
-            _enemy = GetComponent<Enemy.Enemy>();
+            _slime = GetComponent<Enemy.Slime>();
             _animator = GetComponent<Animator>();
         }
 
@@ -38,8 +39,11 @@ namespace Managers
             health.OnDeath -= HandleDeath;
         }
         
+
         private void HandleDeath()
         {
+            if (_isDead) return;       // ignore repeat calls
+            _isDead = true;
             StartCoroutine(DeathSequence());
         }
         
@@ -47,18 +51,20 @@ namespace Managers
         {
             // Disable AI so enemy stops moving
             _navAgent.enabled = false;
-            _enemy.enabled = false;
+            _slime.enabled = false;
             _animator?.SetTrigger(Death);
+            //_animator?.ResetTrigger(Death);
             yield return new WaitForSeconds(respawnDelay);
-            // Reset health and re-enable AI
             health.ResetHealth();
             _navAgent.enabled = true;
             _navAgent.Warp(enemyRespawnPoint.position); 
             _navAgent.ResetPath();
-            // Reset enemy back to idle
-            _enemy.ResetEnemy();
-            // Reset animator
+            _isDead = false;
+            _slime.enabled = true;
+            _slime.ResetEnemy();
             _animator?.ResetTrigger(Death);
+            yield return null;   
+            _animator?.Play("idle", 0, 0f);
         }
     }
 }

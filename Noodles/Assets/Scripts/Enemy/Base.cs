@@ -4,7 +4,7 @@ using UnityEngine.AI;
 
 namespace Enemy
 {
-    public abstract class EnemyBase : MonoBehaviour
+    public abstract class Base : MonoBehaviour
     {
         protected NavMeshAgent Agent;
         protected Animator EnemyAnim;

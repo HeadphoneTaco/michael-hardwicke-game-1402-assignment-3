@@ -1,136 +1,138 @@
+using System;
 using System.Collections;
 using Enums;
 using UnityEngine;
 using UnityEngine.AI;
 using Interfaces;
+using Random = UnityEngine.Random;
 
 namespace Enemy
 {
-    /// <summary>
-    ///     Controls enemy patrol behavior using a simple state machine.
-    ///     The enemy moves between random patrol points, pauses when it arrives,
-    ///     then selects a new destination.
-    /// </summary>
-    public class Enemy : MonoBehaviour
+    public class Slime : Base
     {
         [SerializeField] private Transform[] patrolPoints;
         [SerializeField] private NavMeshAgent agent;
         [SerializeField] private Transform playerTransform;
         [SerializeField] private float chaseDistance;
-        [SerializeField] private float giveUpDistance;
         [SerializeField] private float chaseCheckAngle;
+        [SerializeField] private float giveUpDistance;
         [SerializeField] private Animator enemyAnim;
         [SerializeField] private float attackRange = 2f;
         [SerializeField] private int attackDamage = 10;
-        [SerializeField] private float attackCooldown = 1.5f;
+        [SerializeField] private float attackCooldown = 5f;
+
+        protected override float ChaseDistance => chaseDistance;
+        protected override float AttackRange => attackRange;
+        protected override int AttackDamage => attackDamage;
+
         private float _lastAttackTime;
-        private static readonly int Attack = Animator.StringToHash("attack");
-        private static readonly int Death = Animator.StringToHash("death");
-        private EnemyState _currentState;
+        private static readonly int AttackHash = Animator.StringToHash("attack");
+        private static readonly int DeathHash = Animator.StringToHash("death");
+        private static readonly int WalkHash = Animator.StringToHash("walk");
+        private static readonly int IdleHash = Animator.StringToHash("idle");
+
         private Transform _currentTarget;
         private bool _isWaiting;
-        private static readonly int Walk = Animator.StringToHash("walk");
-        private static readonly int Idle = Animator.StringToHash("idle");
         private Vector3 _directionToPlayer;
+
         private void Start()
         {
+            Agent = agent;
+            EnemyAnim = enemyAnim;
             ChooseARandomPointAndMove();
         }
+
         private void FixedUpdate()
         {
-            if (_currentState == EnemyState.Idle)
+            if (CurrentState == EnemyState.Idle)
             {
                 if (!_isWaiting)
                     StartCoroutine(WaitAndChooseARandomPointAndMove(5));
-        
+
                 if (IsPlayerInRange() && IsInFOV())
                     SetState(EnemyState.Chase);
             }
-            else if (_currentState == EnemyState.Patrol)
+            else if (CurrentState == EnemyState.Patrol)
             {
                 if (agent.remainingDistance <= 0.2f)
                     SetState(EnemyState.Idle);
-        
+
                 if (IsPlayerInRange() && IsInFOV())
                     SetState(EnemyState.Chase);
             }
-            else if (_currentState == EnemyState.Chase)
+            else if (CurrentState == EnemyState.Chase)
             {
                 agent.SetDestination(playerTransform.position);
-    
+
                 if (IsPlayerInAttackRange())
                     SetState(EnemyState.Attack);
-    
+
                 if (HasPlayerGoneAwayFromMeTooSad())
                     SetState(EnemyState.Idle);
             }
-            else if (_currentState == EnemyState.Attack)
+            else if (CurrentState == EnemyState.Attack)
             {
-                agent.SetDestination(transform.position); // stop moving
-    
+                agent.SetDestination(transform.position);
+
                 if (!IsPlayerInAttackRange())
                     SetState(EnemyState.Chase);
-    
+
                 if (Time.time >= _lastAttackTime + attackCooldown)
                 {
                     _lastAttackTime = Time.time;
-                    TryDamagePlayer();
+                    HandleAttack();
                 }
             }
         }
-        
+
         public void ResetEnemy()
         {
+            _isWaiting = false;
             SetState(EnemyState.Idle);
         }
-        
-        private void SetState(EnemyState newState)
+
+        protected override void SetState(EnemyState newState)
         {
-            // Don't do anything if we're already in this state
-            if (_currentState == newState) return;
-    
-            _currentState = newState;
-            Debug.Log("Current State: " + _currentState);
-    
-            switch (_currentState)
+            if (CurrentState == newState) return;
+
+            CurrentState = newState;
+
+            switch (CurrentState)
             {
                 case EnemyState.Idle:
-                    enemyAnim.SetBool(Walk, false);
-                    enemyAnim.SetBool(Idle, true);
-                    enemyAnim.SetBool(Attack, false);
+                    EnemyAnim.SetBool(WalkHash, false);
+                    EnemyAnim.SetBool(IdleHash, true);
+                    EnemyAnim.SetBool(AttackHash, false);
                     break;
-            
+
                 case EnemyState.Patrol:
-                    enemyAnim.SetBool(Idle, false);
-                    enemyAnim.SetBool(Walk, true);
-                    enemyAnim.SetBool(Attack, false);
-                    break;
-            
                 case EnemyState.Chase:
-                    enemyAnim.SetBool(Idle, false);
-                    enemyAnim.SetBool(Walk, true);
-                    enemyAnim.SetBool(Attack, false);
+                    EnemyAnim.SetBool(IdleHash, false);
+                    EnemyAnim.SetBool(WalkHash, true);
+                    EnemyAnim.SetBool(AttackHash, false);
                     break;
-                
+
                 case EnemyState.Attack:
-                    enemyAnim.SetBool(Walk, false);
-                    enemyAnim.SetBool(Idle, false);
-                    enemyAnim.SetBool(Attack, true);
+                    EnemyAnim.SetBool(WalkHash, false);
+                    EnemyAnim.SetBool(IdleHash, false);
+                    EnemyAnim.SetBool(AttackHash, true);
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
-        
+
+        protected override void HandleAttack()
+        {
+            var damageable = playerTransform.GetComponentInParent<IDamageable>();
+            damageable?.TakeDamage(AttackDamage);
+        }
+
         private bool IsPlayerInAttackRange()
         {
             return Vector3.Distance(transform.position, playerTransform.position) <= attackRange;
         }
 
-        private void TryDamagePlayer()
-        {
-            if (playerTransform.TryGetComponent<IDamageable>(out var damageable))
-                damageable.TakeDamage(attackDamage);
-        }
-        
         private IEnumerator WaitAndChooseARandomPointAndMove(float timeToWait)
         {
             _isWaiting = true;
@@ -139,22 +141,25 @@ namespace Enemy
             ChooseARandomPointAndMove();
             _isWaiting = false;
         }
+
         private void ChooseARandomPointAndMove()
         {
             if (patrolPoints.Length <= 0) return;
-
+            if (!agent.isOnNavMesh) return;
             _currentTarget = patrolPoints[Random.Range(0, patrolPoints.Length)];
             agent.SetDestination(_currentTarget.position);
-            Debug.Log("Random point chosen");
         }
+
         private bool IsPlayerInRange()
         {
             return Vector3.Distance(transform.position, playerTransform.position) <= chaseDistance;
         }
+
         private bool HasPlayerGoneAwayFromMeTooSad()
         {
             return Vector3.Distance(transform.position, playerTransform.position) >= giveUpDistance;
         }
+
         private bool IsInFOV()
         {
             _directionToPlayer = (playerTransform.position - transform.position).normalized;

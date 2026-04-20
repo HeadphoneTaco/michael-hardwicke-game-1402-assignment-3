@@ -32,17 +32,17 @@ namespace Managers
 
             _instance = this;
         }
-
-        private void OnEnable()
-        {
-            health.OnDeath += HandleDeath;
-        }
-
+        
         private void OnDisable()
         {
             health.OnDeath -= HandleDeath;
         }
 
+        private void OnEnable()
+        {
+            health.OnDeath += HandleDeath;
+        }
+        
         private void HandleDeath()
         {
             AudioManager.Instance?.PlayDeath();
@@ -52,11 +52,11 @@ namespace Managers
         private IEnumerator DeathSequence()
         {
             controller.enabled = false;
-            if (animator is not null) animator.SetTrigger(Death);
-            if (deathSpritePrefab is not null)
+            animator?.SetTrigger(Death);
+            if (deathSpritePrefab != null)
                 _activeGhost = Instantiate(deathSpritePrefab, controller.transform.position, Quaternion.identity);
             yield return new WaitForSeconds(deathDelay);
-            if (_activeGhost is not null) Destroy(_activeGhost);
+            Destroy(_activeGhost);
             controller.transform.position = activeSpawnPoint.transform.position;
             health.ResetHealth();
             animator?.SetTrigger(Respawn);
