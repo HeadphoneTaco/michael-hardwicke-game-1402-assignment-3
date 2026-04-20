@@ -1,8 +1,6 @@
 using Managers;
 using UnityEngine;
 
-//TODO:Make the game actually get to the loss state
-
 namespace Triggers
 {
     /// <summary>

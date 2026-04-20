@@ -1,7 +1,6 @@
 using Managers;
 using UnityEngine;
 
-//TODO:Make the game have a win condition that isn't just a collision volume
 namespace Triggers
 {
     /// <summary>

@@ -20,8 +20,7 @@ namespace Player
             interactionInput.Enable();
             interactionInput.performed += Interact;
         }
-
-        //TODO:Make these enable/disable matching pattern.
+        
         private void OnDisable()
         {
             interactionInput.performed -= Interact;

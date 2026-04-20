@@ -180,8 +180,7 @@ namespace Player
             _velocity = _currentHorizontalVelocity + Vector3.up * _velocity.y;
             _velocity.y += gravity * Time.deltaTime;
         }
-
-        //TODO:Move Explore and Aim to separate namespace for movement. Swimming and Climbing should be considered.
+        
         private void CalculateMovementAim()
         {
             transform.Rotate(Vector3.up, rotationSpeed * _lookInput.x * Time.deltaTime);

@@ -56,7 +56,7 @@ Transform:
   m_GameObject: {fileID: 395422505280898176}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -10, y: 0, z: 0}
+  m_LocalPosition: {x: -5, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -268,7 +268,7 @@ Transform:
   m_GameObject: {fileID: 1568295611006472643}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 10}
+  m_LocalPosition: {x: 0, y: 0, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -839,7 +839,7 @@ Transform:
   m_GameObject: {fileID: 4653257204154955154}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1131,11 +1131,11 @@ MonoBehaviour:
   agent: {fileID: 3825960664742498181}
   playerTransform: {fileID: 0}
   chaseDistance: 10
-  giveUpDistance: 20
   chaseCheckAngle: 30
+  giveUpDistance: 20
   enemyAnim: {fileID: 5162232971360506}
   attackRange: 2
-  attackDamage: 10
+  attackDamage: 1
   attackCooldown: 1.5
 --- !u!114 &2476237991426415581
 MonoBehaviour:
@@ -1326,7 +1326,7 @@ Transform:
   m_GameObject: {fileID: 7903357383796295195}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 10, y: 0, z: 0}
+  m_LocalPosition: {x: 5, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
